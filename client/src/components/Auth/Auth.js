@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { Avatar, Button, Paper, Grid, Typography, Container } from '@material-ui/core';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin, googleLogout } from '@react-oauth/google';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from './styles';
 import Input from './Input';
@@ -24,6 +28,11 @@ const Auth = () => {
         handleShowPassword(false);
     };
 
+    const createOrGetUser = async (res) => {
+        const decoded = jwt_decode(res.credential);
+        console.log(decoded)
+    };
+
     return (
         <Container component='main' maxWidth='xs'>
             <Paper className={classes.paper} elevation={3}>
@@ -46,6 +55,13 @@ const Auth = () => {
                     <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit}>
                         { isSignup ? 'Sign Up' : 'Sign In'}
                     </Button>
+                    <GoogleOAuthProvider clientId='969909104783-bheq1n4tpqgrvlrp6os25o7e86e4g5qt.apps.googleusercontent.com'>
+                        <GoogleLogin 
+                            onSuccess={(response) => (createOrGetUser(response))}
+                            onError={() => console.log('Error')}
+                            variant='contained'
+                        />
+                    </GoogleOAuthProvider>
                     <Grid container justifyContent='flex-end'>
                         <Grid item>
                             <Button onClick={switchMode}>
@@ -56,6 +72,7 @@ const Auth = () => {
                 </form>
             </Paper>
         </Container>
+
     );
 };
 
